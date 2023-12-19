@@ -182,7 +182,7 @@ def run_amltk(
     print(new_path)
     best_model = joblib.load(str(new_path))
 
-    return history_df, best_model
+    return best_model
 
 if __name__ == "__main__":
     dataset = openml.datasets.get_dataset(990)  # 990 = 'eucalyptus'
