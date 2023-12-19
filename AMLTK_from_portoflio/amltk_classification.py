@@ -174,7 +174,7 @@ def run_amltk(
     print(len(history_df))
 
     trace = (
-        history_df.sortby("accuracy")
+        trial_history.sortby("accuracy")
     )
     best_trace = trace[0]
     best_bucket = best_trace.bucket
