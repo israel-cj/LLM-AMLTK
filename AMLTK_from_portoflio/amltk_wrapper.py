@@ -51,5 +51,13 @@ class AMLTK_v1():
             )
 
         self.model.fit(X, y)
-        return self.model
+
+    def predict(self, X):
+        return self.model.predict(X)  # type: ignore
+
+    def predict_log_proba(self, X):
+        return self.model.predict_log_proba(X)
+
+    def predict_proba(self, X):
+        return self.model.predict_proba(X)
 
