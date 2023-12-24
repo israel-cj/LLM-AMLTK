@@ -40,7 +40,7 @@ class AMLTK_v1():
         print('uid', self.uid)
 
         if self.task == "classification":
-            self.model = run_amltk(
+            self.model, self.report = run_amltk(
                 N_WORKERS=32,
                 partition="thin",
                 cores=8,
