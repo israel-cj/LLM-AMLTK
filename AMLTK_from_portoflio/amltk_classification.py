@@ -67,29 +67,38 @@ def run_amltk(
             },
             name="feature_preprocessing",
         )
-        >> Choice(
-        Component(
-                    SVC,
-                    config={"probability": True, "random_state": request("seed")},
-                    space={"C": (0.1, 10.0)},
-                    ),
-                Component(
-                    RandomForestClassifier,
-                    config={"random_state": request("seed")},
-                    space={"n_estimators": (10, 100), "criterion": ["gini", "log_loss"]},
-                ),
-                Component(
-                    MLPClassifier,
-                    config={"random_state": request("seed")},
-                    space={
-                        "activation": ["identity", "logistic", "relu"],
-                        "alpha": (0.0001, 0.1),
-                        "learning_rate": ["constant", "invscaling", "adaptive"],
-                    },
-                ),
-            name="estimator"
-        )
+        >> Component(
+        RandomForestClassifier,
+        space={
+            "n_estimators": (10, 100),
+            "max_features": (0.0, 1.0),
+            "criterion": ["gini", "entropy", "log_loss"],
+        },
     )
+)
+    #     >> Choice(
+    #     Component(
+    #                 SVC,
+    #                 config={"probability": True, "random_state": request("seed")},
+    #                 space={"C": (0.1, 10.0)},
+    #                 ),
+    #             Component(
+    #                 RandomForestClassifier,
+    #                 config={"random_state": request("seed")},
+    #                 space={"n_estimators": (10, 100), "criterion": ["gini", "log_loss"]},
+    #             ),
+    #             Component(
+    #                 MLPClassifier,
+    #                 config={"random_state": request("seed")},
+    #                 space={
+    #                     "activation": ["identity", "logistic", "relu"],
+    #                     "alpha": (0.0001, 0.1),
+    #                     "learning_rate": ["constant", "invscaling", "adaptive"],
+    #                 },
+    #             ),
+    #         name="estimator"
+    #     )
+    # )
 
 
     def target_function(trial: Trial, _pipeline: Node) -> Trial.Report:
@@ -141,7 +150,7 @@ def run_amltk(
 
         return trial.success(accuracy=val_acc)
 
-    bucket = PathBucket("example-hpo", clean=True, create=True)
+    bucket = PathBucket("results_model_amltk", clean=True, create=True)
     bucket.store(
         {
             "X_train.csv": X_train,
