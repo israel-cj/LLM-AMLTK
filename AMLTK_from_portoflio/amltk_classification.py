@@ -70,17 +70,17 @@ def run_amltk(
         >> Choice(
         Component(
             SVC,
-            config={"probability": True, "random_state": request("seed")},
+            config={"probability": True, "random_state": 0},
             space={"C": (0.1, 10.0)},
         ),
         Component(
             RandomForestClassifier,
-            config={"random_state": request("seed")},
+            config={"random_state": 0},
             space={"n_estimators": (10, 100), "criterion": ["gini", "log_loss"]},
         ),
         Component(
             MLPClassifier,
-            config={"random_state": request("seed")},
+            config={"random_state": 0},
             space={
                 "activation": ["identity", "logistic", "relu"],
                 "alpha": (0.0001, 0.1),
@@ -90,29 +90,6 @@ def run_amltk(
         name="estimator"
     )
 )
-    #     >> Choice(
-    #     Component(
-    #                 SVC,
-    #                 config={"probability": True, "random_state": request("seed")},
-    #                 space={"C": (0.1, 10.0)},
-    #                 ),
-    #             Component(
-    #                 RandomForestClassifier,
-    #                 config={"random_state": request("seed")},
-    #                 space={"n_estimators": (10, 100), "criterion": ["gini", "log_loss"]},
-    #             ),
-    #             Component(
-    #                 MLPClassifier,
-    #                 config={"random_state": request("seed")},
-    #                 space={
-    #                     "activation": ["identity", "logistic", "relu"],
-    #                     "alpha": (0.0001, 0.1),
-    #                     "learning_rate": ["constant", "invscaling", "adaptive"],
-    #                 },
-    #             ),
-    #         name="estimator"
-    #     )
-    # )
 
 
     def target_function(trial: Trial, _pipeline: Node) -> Trial.Report:
@@ -181,7 +158,7 @@ def run_amltk(
         space=pipeline,  #  (1)!
         metrics=Metric("accuracy", minimize=False, bounds=(0.0, 1.0)),
         bucket=bucket,
-        seed=seed,
+        # seed=seed,
     )
     task = scheduler.task(target_function)
 
