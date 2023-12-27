@@ -29,7 +29,7 @@ def run_amltk(
         cores = 8,
         memory = "32 GB",
         walltime = "01:00:00",
-        seed = 42,
+        seed = 0,
         X=None,
         y=None,
 ):
