@@ -11,7 +11,7 @@ class AMLTK_v1():
             partition="thin",
             cores=8,
             memory="32 GB",
-            walltime="01:00:00",
+            walltime=60,
             task = "classification"
     ) -> None:
         self.N_WORKERS = N_WORKERS
@@ -45,7 +45,7 @@ class AMLTK_v1():
                 partition="thin",
                 cores=8,
                 memory="32 GB",
-                walltime="01:00:00",
+                walltime=self.walltime,
                 X=X,
                 y=y,
             )

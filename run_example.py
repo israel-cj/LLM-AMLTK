@@ -17,7 +17,7 @@ automl = AMLTK_v1(
     partition="thin",
     cores=8,
     memory="32 GB",
-    walltime="01:00:00",
+    walltime=60,
     task="classification"
     )
 

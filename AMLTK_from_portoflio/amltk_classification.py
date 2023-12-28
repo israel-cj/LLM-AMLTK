@@ -28,7 +28,7 @@ def run_amltk(
         partition = "thin",
         cores = 8,
         memory = "32 GB",
-        walltime = "01:00:00",
+        walltime = 60,
         seed = 0,
         X=None,
         y=None,
@@ -649,7 +649,10 @@ def run_amltk(
     def stop_scheduler_on_cancelled(_: Any) -> None:
         raise RuntimeError("Scheduler cancelled a worker!")
 
-    scheduler.run(timeout=600)
+    try:
+        scheduler.run(timeout=walltime)
+    except Exception as e:
+        print(e)
     history_df = trial_history.df()
     print(" ... Report ...")
     print(history_df)
@@ -677,7 +680,7 @@ if __name__ == "__main__":
         partition="thin",
         cores=8,
         memory="32 GB",
-        walltime="01:00:00",
+        walltime=60,
         X=X,
         y=y,
     )
