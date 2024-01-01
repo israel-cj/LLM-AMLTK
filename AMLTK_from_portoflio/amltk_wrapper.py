@@ -1,4 +1,5 @@
 from .amltk_classification import run_amltk
+from .amltk_regression import run_amltk_regressor
 import uuid
 
 class AMLTK_v1():
@@ -41,6 +42,17 @@ class AMLTK_v1():
 
         if self.task == "classification":
             self.model, self.report = run_amltk(
+                N_WORKERS=32,
+                partition="thin",
+                cores=8,
+                memory="32 GB",
+                walltime=self.walltime,
+                X=X,
+                y=y,
+            )
+
+        if self.task == "regression":
+            self.model, self.report = run_amltk_regressor(
                 N_WORKERS=32,
                 partition="thin",
                 cores=8,

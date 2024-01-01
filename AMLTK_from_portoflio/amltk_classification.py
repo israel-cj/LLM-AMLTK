@@ -56,7 +56,7 @@ def run_amltk(
             Sequential(name="Pipeline")
             >> Split(
         {
-            "categorical": [SimpleImputer(strategy="constant", fill_value="missing"), OneHotEncoder(drop="first")],
+            "categorical": [SimpleImputer(strategy="constant", fill_value="missing"), OneHotEncoder(drop="first", handle_unknown='ignore')],
             "numerical": Component(SimpleImputer, space={"strategy": ["mean", "median"]}),
         },
         name="feature_preprocessing",
