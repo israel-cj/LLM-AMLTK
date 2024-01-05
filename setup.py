@@ -17,8 +17,5 @@ setup(
         "openml",
         "scikit-learn",
         "ipython",
-        "ott-jax",
-        "dirty_cat",
-        "gdown",
     ],
 )
