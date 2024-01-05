@@ -1,8 +1,9 @@
 from .amltk_classification import run_amltk
 from .amltk_regression import run_amltk_regressor
+from .llm_optimization import improve_models
 import uuid
 
-class AMLTK_v1():
+class AMLTK_llm():
     """
     Parameters:
     """
@@ -13,7 +14,9 @@ class AMLTK_v1():
             cores=8,
             memory="32 GB",
             walltime=60,
-            task = "classification"
+            task = "classification",
+            enhance = False,
+            search_space = None
     ) -> None:
         self.N_WORKERS = N_WORKERS
         self.partition = partition
@@ -24,6 +27,10 @@ class AMLTK_v1():
         self.uid = str(uuid.uuid4())
         self.report = None
         self.model = None
+        self.real_history = None
+        self.real_metric = None
+        self.enhance = enhance
+        self.search_space = search_space
     def fit(
             self, X, y, disable_caafe=False
     ):
@@ -39,30 +46,48 @@ class AMLTK_v1():
 
         """
         print('uid', self.uid)
-
-        if self.task == "classification":
-            self.model, self.report = run_amltk(
-                N_WORKERS=32,
-                partition="thin",
-                cores=8,
-                memory="32 GB",
-                walltime=self.walltime,
-                X=X,
-                y=y,
+        self.fit_inner(X, y, self.task, self.walltime)
+        print('A model has been optimized with SMACOptimizer')
+        # optimize the search method with LLM
+        if self.enhance:
+            print('Looking for a better search space with LLM')
+            new_search_space = improve_models(
+                history = self.real_history,
+                task = self.task,
+                real_metric=self.real_metric,
+                llm_model="gpt-3.5-turbo",
+                search_space=self.search_space,
             )
-
-        if self.task == "regression":
-            self.model, self.report = run_amltk_regressor(
-                N_WORKERS=32,
-                partition="thin",
-                cores=8,
-                memory="32 GB",
-                walltime=self.walltime,
-                X=X,
-                y=y,
-            )
-
+            if len(new_search_space)>0:
+                print('Search space created')
+                self.fit_inner(X, y, self.task, self.walltime, search_space=new_search_space)
+                print('A new model was found with SMACOptimizer')
         self.model.fit(X, y)
+
+    def fit_inner(self, X, y, task, walltime, search_space = None):
+        if task == "classification":
+            self.model, self.report, self.real_history, self.real_metric, self.search_space = run_amltk(
+                N_WORKERS=32,
+                partition="thin",
+                cores=8,
+                memory="32 GB",
+                walltime=walltime,
+                X=X,
+                y=y,
+                search_space=search_space,
+            )
+
+        if task == "regression":
+            self.model, self.report, self.real_history, self.real_metric, self.search_space = run_amltk_regressor(
+                N_WORKERS=32,
+                partition="thin",
+                cores=8,
+                memory="32 GB",
+                walltime=walltime,
+                X=X,
+                y=y,
+                search_space=search_space,
+            )
 
     def predict(self, X):
         return self.model.predict(X)  # type: ignore

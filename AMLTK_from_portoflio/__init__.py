@@ -1,1 +1,1 @@
-from .amltk_wrapper import AMLTK_v1
+from .amltk_wrapper import AMLTK_llm
