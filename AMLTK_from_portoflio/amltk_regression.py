@@ -30,19 +30,19 @@ def run_amltk_regressor(
         y=None,
         search_space=None,
 ):
-    # N_WORKERS = N_WORKERS
-    # scheduler = Scheduler.with_slurm(
-    #     n_workers=N_WORKERS,  # Number of workers to launch
-    #     queue=partition,  # Name of the queue to submit to
-    #     cores=cores,  # Number of cores per worker
-    #     memory= memory,  # Memory per worker
-    #     walltime= "60:00:00",  # Walltime per worker # I think this is independen from the timeout
-    #     # submit_command="sbatch --extra-arguments",  # Sometimes you need extra arguments to the launch command
-    # )
+    N_WORKERS = N_WORKERS
+    scheduler = Scheduler.with_slurm(
+        n_workers=N_WORKERS,  # Number of workers to launch
+        queue=partition,  # Name of the queue to submit to
+        cores=cores,  # Number of cores per worker
+        memory= memory,  # Memory per worker
+        walltime= "60:00:00",  # Walltime per worker # I think this is independen from the timeout
+        # submit_command="sbatch --extra-arguments",  # Sometimes you need extra arguments to the launch command
+    )
 
-    # Running in colab test
-    N_WORKERS = 2
-    scheduler = Scheduler.with_processes(N_WORKERS)
+    # # Running in colab test
+    # N_WORKERS = 2
+    # scheduler = Scheduler.with_processes(N_WORKERS)
 
     splits = {"train": 0.6, "val": 0.2, "test": 0.2}
     seed = seed
