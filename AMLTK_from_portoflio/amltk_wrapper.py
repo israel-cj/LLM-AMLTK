@@ -10,12 +10,12 @@ class AMLTK_llm():
     def __init__(
             self,
             N_WORKERS = 32,
-            partition="thin",
-            cores=8,
+            partition="genoa",
+            cores=2,
             memory="32 GB",
             walltime=60,
             task = "classification",
-            enhance = False,
+            enhance = True,
             search_space = None
     ) -> None:
         self.N_WORKERS = N_WORKERS
@@ -68,7 +68,7 @@ class AMLTK_llm():
         if task == "classification":
             self.model, self.report, self.real_history, self.real_metric, self.search_space = run_amltk(
                 N_WORKERS=32,
-                partition="thin",
+                partition=self.partition,
                 cores=8,
                 memory="32 GB",
                 walltime=walltime,
@@ -80,7 +80,7 @@ class AMLTK_llm():
         if task == "regression":
             self.model, self.report, self.real_history, self.real_metric, self.search_space = run_amltk_regressor(
                 N_WORKERS=32,
-                partition="thin",
+                partition=self.partition,
                 cores=8,
                 memory="32 GB",
                 walltime=walltime,
