@@ -19,7 +19,8 @@ automl = AMLTK_llm(
     cores=8,
     memory="32 GB",
     walltime=60,
-    task="classification"
+    task="classification",
+    enhance=True,
     )
 
 automl.fit(X_train, y_train)
