@@ -11,7 +11,7 @@ class AMLTK_llm():
             self,
             N_WORKERS = 32,
             partition="genoa",
-            cores=2,
+            cores=8,
             memory="32 GB",
             walltime=60,
             task = "classification",
@@ -48,6 +48,7 @@ class AMLTK_llm():
         print('uid', self.uid)
         self.fit_inner(X, y, int(self.walltime/2))
         print('A model has been optimized with SMACOptimizer')
+        self.model.fit(X, y)
         # optimize the search method with LLM
         if self.enhance:
             print('Looking for a better search space with LLM')
@@ -62,15 +63,16 @@ class AMLTK_llm():
                 print('Search space created')
                 self.fit_inner(X, y, int(self.walltime/2), search_space=new_search_space)
                 print('A new model was found with SMACOptimizer')
-        self.model.fit(X, y)
+                self.model.fit(X, y)
+                print('The model generated with LLM was trained')
 
     def fit_inner(self, X, y, walltime, search_space = None):
         if self.task == "classification":
             self.model, self.report, self.real_history, self.real_metric, self.search_space = run_amltk(
-                N_WORKERS=32,
+                N_WORKERS=self.N_WORKERS,
                 partition=self.partition,
                 cores=self.cores,
-                memory="32 GB",
+                memory=self.memory,
                 walltime=walltime,
                 X=X,
                 y=y,
@@ -79,10 +81,10 @@ class AMLTK_llm():
 
         if self.task == "regression":
             self.model, self.report, self.real_history, self.real_metric, self.search_space = run_amltk_regressor(
-                N_WORKERS=32,
+                N_WORKERS=self.N_WORKERS,
                 partition=self.partition,
                 cores=self.cores,
-                memory="32 GB",
+                memory=self.memory,
                 walltime=walltime,
                 X=X,
                 y=y,
