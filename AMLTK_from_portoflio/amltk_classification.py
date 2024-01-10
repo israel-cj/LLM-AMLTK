@@ -35,7 +35,7 @@ def run_amltk(
         queue=partition,  # Name of the queue to submit to
         cores=cores,  # Number of cores per worker
         memory= memory,  # Memory per worker
-        walltime= "10:00:00",  # Walltime per worker # I think this is independent from the timeout
+        walltime= "20:00:00",  # Walltime per worker # I think this is independent from the timeout
         # submit_command="sbatch --extra-arguments",  # Sometimes you need extra arguments to the launch command
     )
 
