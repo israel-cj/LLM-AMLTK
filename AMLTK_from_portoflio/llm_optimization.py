@@ -68,6 +68,7 @@ def improve_models(
         real_metric=None,
         llm_model="gpt-3.5-turbo",
         search_space=None,
+        pipeline_space = None
 ):
     if task == 'classification':
         metric = "accuracy"
@@ -82,16 +83,16 @@ def improve_models(
 
     natural_descriptions_LIST = []
     for element in trace:
-        this_bucket = element.bucket
-        new_path_CONFIG = posixpath.join(this_bucket.path, element.name, 'config.json')
-        with open(new_path_CONFIG) as f:
-            this_model_json = json.load(f)
-        # this_name = this_model_json['Pipeline:estimator:__choice__']
-        this_name = list(this_model_json.values())[0]
-        print('this_name: ', this_name)
+        this_configured_pipeline = pipeline_space.configure(element.config)
+        this_model = this_configured_pipeline.build(builder="sklearn")
+        name_in_dictionary = list(this_model.named_steps.keys())[-1]
+        this_model_name = type(this_model[name_in_dictionary])
+        print('this_model_name', this_model_name)
         try:
-            this_component = search_space[this_name]
-            natural_description_model = f"{str(this_component.item)} , with the next hyperparameters {this_component.config}"
+            this_component = search_space[name_in_dictionary]
+            this_hyperparameters = this_component.config
+            params_without_none = {k: v for k, v in this_hyperparameters.items() if v is not None}
+            natural_description_model = f"{str(this_component.item)} , with the next hyperparameters {params_without_none}"
             natural_descriptions_LIST.append(natural_description_model)
         except Exception as e:
             print("Error: ")

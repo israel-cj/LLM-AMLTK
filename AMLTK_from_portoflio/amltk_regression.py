@@ -183,27 +183,33 @@ def run_amltk_regressor(
     trace = (
         trial_history.sortby("r2_score")
     )
+
+    best_model_id = 0  # Because the trace is sort
+    trace[best_model_id].config
+    configured_pipeline = pipeline.configure(trace[best_model_id].config)
+    best_model = configured_pipeline.build(builder="sklearn")
+
     # best_trace = trace[0]
     # best_bucket = best_trace.bucket
     # new_path = posixpath.join(best_bucket.path, best_trace.name, 'model.pkl')
     # print(new_path)
     # best_model = joblib.load(str(new_path))
-    for best_trace in trace:
-        best_bucket = best_trace.bucket
-        best_bucket.path
-        try:
-            new_path = posixpath.join(best_bucket.path, best_trace.name, 'model.pkl')
-            print("This is the new path to look for the PKL model: ", new_path)
-            e = None
-        except Exception as e:
-            print(e)
-        if e is None:
-            break
-    if e is not None:
-        print('No PKL model was found in the optimization, verify the AMLTK package')
-    best_model = joblib.load(str(new_path))
+    # for best_trace in trace:
+    #     best_bucket = best_trace.bucket
+    #     best_bucket.path
+    #     try:
+    #         new_path = posixpath.join(best_bucket.path, best_trace.name, 'model.pkl')
+    #         print("This is the new path to look for the PKL model: ", new_path)
+    #         e = None
+    #     except Exception as e:
+    #         print(e)
+    #     if e is None:
+    #         break
+    # if e is not None:
+    #     print('No PKL model was found in the optimization, verify the AMLTK package')
+    # best_model = joblib.load(str(new_path))
 
-    return best_model, history_df, trial_history, metric, search_space
+    return best_model, history_df, trial_history, metric, search_space, pipeline
 
 if __name__ == "__main__":
     dataset = openml.datasets.get_dataset(41021)  # 990 = 'eucalyptus'

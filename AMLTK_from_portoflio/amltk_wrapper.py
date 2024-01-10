@@ -29,6 +29,7 @@ class AMLTK_llm():
         self.model = None
         self.real_history = None
         self.real_metric = None
+        self.pipeline = None
         self.enhance = enhance
         self.search_space = search_space
     def fit(
@@ -58,6 +59,7 @@ class AMLTK_llm():
                 real_metric=self.real_metric,
                 llm_model="gpt-3.5-turbo",
                 search_space=self.search_space,
+                pipeline_space = self.pipeline,
             )
             if len(new_search_space)>0:
                 print('Search space created')
@@ -68,7 +70,7 @@ class AMLTK_llm():
 
     def fit_inner(self, X, y, walltime, search_space = None):
         if self.task == "classification":
-            self.model, self.report, self.real_history, self.real_metric, self.search_space = run_amltk(
+            self.model, self.report, self.real_history, self.real_metric, self.search_space, self.pipeline = run_amltk(
                 N_WORKERS=self.N_WORKERS,
                 partition=self.partition,
                 cores=self.cores,
@@ -80,7 +82,7 @@ class AMLTK_llm():
             )
 
         if self.task == "regression":
-            self.model, self.report, self.real_history, self.real_metric, self.search_space = run_amltk_regressor(
+            self.model, self.report, self.real_history, self.real_metric, self.search_space, self.pipeline = run_amltk_regressor(
                 N_WORKERS=self.N_WORKERS,
                 partition=self.partition,
                 cores=self.cores,
