@@ -190,12 +190,13 @@ def run_amltk(
     list_models = []
     counter = 0
     for this_trace in trace:
-        this_config = this_trace.config
-        configured_pipeline = pipeline.configure(this_config)
-        model = configured_pipeline.build(builder="sklearn")
-        this_name = f"{name_models}_{counter}"
-        list_models.append((this_name, model))
-        counter += 1
+        if str(this_trace.status) == 'success':
+            this_config = this_trace.config
+            configured_pipeline = pipeline.configure(this_config)
+            model = configured_pipeline.build(builder="sklearn")
+            this_name = f"{name_models}_{counter}"
+            list_models.append((this_name, model))
+            counter += 1
 
     # Create the ensemble model
     best_model = VotingClassifier(
