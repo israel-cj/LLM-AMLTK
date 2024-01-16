@@ -57,8 +57,8 @@ def run_amltk(
     if search_space:
         search_space = search_space
     else:
-        # search_space = classification_search_space
-        search_space = {**LLM_generated_classification_search_space, **classification_search_space}
+        search_space = classification_search_space
+        # search_space = {**LLM_generated_classification_search_space, **classification_search_space}
 
     items = set(search_space.values())
     pipeline = (
