@@ -1,9 +1,11 @@
 from typing import Any
 
 import openml
+import uuid
 import posixpath
 import joblib
 
+from sklearn.ensemble import VotingClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
@@ -15,7 +17,7 @@ from amltk.scheduling import Scheduler
 from amltk.sklearn import split_data
 from amltk.store import PathBucket
 # Our module
-from .search_spaces import classification_search_space
+from .search_spaces import classification_search_space, LLM_generated_classification_search_space
 
 
 def run_amltk(
@@ -55,7 +57,8 @@ def run_amltk(
     if search_space:
         search_space = search_space
     else:
-        search_space = classification_search_space
+        # search_space = classification_search_space
+        search_space = {**LLM_generated_classification_search_space, **classification_search_space}
 
     items = set(search_space.values())
     pipeline = (
@@ -179,31 +182,26 @@ def run_amltk(
         trial_history.sortby("accuracy")
     )
 
-    best_model_id = 0 # They are sorted the best is the 0
-    trace[best_model_id].config
-    configured_pipeline = pipeline.configure(trace[best_model_id].config)
-    best_model = configured_pipeline.build(builder="sklearn")
+    # best_model_id = 0 # They are sorted the best is the 0
+    # trace[best_model_id].config
+    # configured_pipeline = pipeline.configure(trace[best_model_id].config)
+    # best_model = configured_pipeline.build(builder="sklearn")
+    name_models = str(uuid.uuid4())[:5]
+    list_models = []
+    counter = 0
+    for this_trace in trace:
+        this_config = this_trace.config
+        configured_pipeline = pipeline.configure(this_config)
+        model = configured_pipeline.build(builder="sklearn")
+        this_name = f"{name_models}_{counter}"
+        list_models.append((this_name, model))
+        counter += 1
 
-    # best_trace = trace[0]
-    # best_bucket = best_trace.bucket
-    # new_path = posixpath.join(best_bucket.path, best_trace.name, 'model.pkl')
-    # print(new_path)
-    # best_model = joblib.load(str(new_path))
-    # for best_trace in trace:
-    #     best_bucket = best_trace.bucket
-    #     best_bucket.path
-    #     try:
-    #         new_path = posixpath.join(best_bucket.path, best_trace.name, 'model.pkl')
-    #         print("This is the new path to look for the PKL model: ", new_path)
-    #         e = None
-    #     except Exception as e:
-    #         print(e)
-    #     if e is None:
-    #         break
-    # if e is not None:
-    #     print('No PKL model was found in the optimization, verify the AMLTK package')
-    # best_model = joblib.load(str(new_path))
-
+    # Create the ensemble model
+    best_model = VotingClassifier(
+        estimators=list_models,
+        voting='soft'  # 'hard' for hard voting, 'soft' for weighted voting
+    )
 
     return best_model, history_df, trial_history, metric, search_space, pipeline
 
