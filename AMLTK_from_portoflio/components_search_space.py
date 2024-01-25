@@ -1,3 +1,4 @@
+"Classification: "
 from amltk.pipeline import Component
 from sklearn.ensemble import ExtraTreesClassifier
 

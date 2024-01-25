@@ -54,10 +54,10 @@ def run_amltk_regressor(
     X_test, y_test = data["test"]
 
     if search_space:
-        search_space = search_space
+        # search_space = search_space
+        search_space = {**search_space, **regression_search_space}
     else:
         search_space = regression_search_space
-        # search_space = {**LLM_generated_regression_search_space, **regression_search_space}
 
     items = set(search_space.values())
     pipeline = (
